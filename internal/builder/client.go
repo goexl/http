@@ -3,6 +3,7 @@ package builder
 import (
 	"time"
 
+	"github.com/goexl/http/internal/core"
 	"github.com/goexl/http/internal/param"
 )
 
@@ -49,4 +50,24 @@ func (c *Client) Header(key string, value string) (builder *Client) {
 	builder = c
 
 	return
+}
+
+func (c *Client) Auth() *Auth {
+	return NewAuth(c)
+}
+
+func (c *Client) Proxy() *Proxy {
+	return NewProxy(c)
+}
+
+func (c *Client) Certificate() *Certificate {
+	return NewCertificate(c)
+}
+
+func (c *Client) Cookie() *Cookie {
+	return NewCookie(c)
+}
+
+func (c *Client) Build() *core.Client {
+	return core.NewClient(c.params)
 }

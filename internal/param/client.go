@@ -28,7 +28,7 @@ type Client struct {
 	Forms map[string]string `json:"forms,omitempty"`
 	// 通用头信息
 	Headers map[string]string `json:"headers,omitempty"`
-	// 通用Cookie
+	// 信息
 	Cookies []*http.Cookie `json:"cookies,omitempty"`
 	// 日志
 	Logger simaqian.Logger `json:"logger,omitempty"`
@@ -40,6 +40,7 @@ func NewClient() *Client {
 		Queries: make(map[string]string),
 		Forms:   make(map[string]string),
 		Headers: make(map[string]string),
+		Cookies: make([]*http.Cookie, 0),
 	}
 }
 

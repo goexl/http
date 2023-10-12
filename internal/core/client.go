@@ -10,7 +10,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/go-resty/resty/v2"
 	"github.com/goexl/gox"
 	"github.com/goexl/gox/field"
 	"github.com/goexl/http/internal/interanl"
@@ -70,7 +69,7 @@ func (c *Client) Fields(rsp *resty.Response) (fields gox.Fields[any]) {
 
 	fields = gox.Fields[any]{
 		field.New("url", rsp.Request.URL),
-		field.New("code", rsp.StatusCode()),
+		field.New("status", rsp.StatusCode()),
 		field.New("body", string(rsp.Body())),
 	}
 
