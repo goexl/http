@@ -7,5 +7,7 @@ type Certificate struct {
 }
 
 func NewCertificate() *Certificate {
-	return new(Certificate)
+	return &Certificate{
+		Skip: true,
+	}
 }

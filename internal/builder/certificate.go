@@ -16,8 +16,8 @@ func NewCertificate(core *Client) *Certificate {
 	}
 }
 
-func (c *Certificate) Skip() (auth *Certificate) {
-	c.params.Skip = true
+func (c *Certificate) Skip(skip bool) (auth *Certificate) {
+	c.params.Skip = skip
 	auth = c
 
 	return
