@@ -12,8 +12,6 @@ import (
 type Client struct {
 	// 超时
 	Timeout time.Duration `json:"timeout,omitempty"`
-	// 代理
-	Proxy *Proxy `json:"proxy,omitempty"`
 	// 代理列表
 	Proxies []*Proxy `json:"proxies,omitempty"`
 	// 授权配置
@@ -37,6 +35,7 @@ type Client struct {
 func NewClient() *Client {
 	return &Client{
 		Payload: true,
+		Proxies: make([]*Proxy, 0),
 		Queries: make(map[string]string),
 		Forms:   make(map[string]string),
 		Headers: make(map[string]string),
