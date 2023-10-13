@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/goexl/http/internal/interanl"
 )
 
 type Client struct {
@@ -28,8 +27,6 @@ type Client struct {
 	Headers map[string]string `json:"headers,omitempty"`
 	// 信息
 	Cookies []*http.Cookie `json:"cookies,omitempty"`
-	// 日志
-	Logger interanl.Logger `json:"logger,omitempty"`
 }
 
 func NewClient() *Client {

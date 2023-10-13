@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/goexl/http/internal/core"
-	"github.com/goexl/http/internal/interanl"
 	"github.com/goexl/http/internal/param"
 )
 
@@ -69,13 +68,6 @@ func (c *Client) Headers(headers map[string]string) (builder *Client) {
 
 func (c *Client) Header(key string, value string) (builder *Client) {
 	c.params.Headers[key] = value
-	builder = c
-
-	return
-}
-
-func (c *Client) Logger(logger interanl.Logger) (builder *Client) {
-	c.params.Logger = logger
 	builder = c
 
 	return

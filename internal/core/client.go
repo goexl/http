@@ -21,7 +21,6 @@ import (
 type Client struct {
 	*resty.Client
 
-	logger  interanl.Logger
 	proxies map[string]*param.Proxy
 	_       gox.CannotCopy
 }
@@ -29,22 +28,18 @@ type Client struct {
 func NewClient(params *param.Client) (client *Client) {
 	client = new(Client)
 	client.Client = resty.New()
-	client.logger = params.Logger
 	client.proxies = make(map[string]*param.Proxy)
 
 	params.Init(client.Client)
 	// 设置动态代理
-	if nil != params.Proxy && "" == params.Proxy.Target && 0 == len(params.Proxies) {
-		addr := params.Proxy.Addr()
+	if 1 == len(params.Proxies) {
+		addr := params.Proxies[0].Addr()
 		client.SetProxy(addr)
-		params.Logger.Debug("设置通用代理服务器", field.New("proxy", addr))
-	} else {
-		if nil != params.Proxy {
-			target := gox.Ift("" == params.Proxy.Target, constant.TargetDefault, params.Proxy.Target)
-			client.proxies[target] = params.Proxy
-		}
+		// TODO params.Logger.Debug("设置通用代理服务器", field.New("proxy", addr))
+	} else if 1 < len(params.Proxies) {
 		for _, proxy := range params.Proxies {
-			client.proxies[proxy.Target] = proxy
+			target := gox.Ift("" == proxy.Target, constant.TargetDefault, proxy.Target)
+			client.proxies[target] = proxy
 		}
 	}
 	// 动态代理
@@ -99,7 +94,7 @@ func (c *Client) log(_ *resty.Client, req *http.Request) (err error) {
 			fields = append(fields, field.New(fmt.Sprintf("header.%s", key), value))
 		}
 	}
-	c.logger.Debug("向服务器发送请求", fields...)
+	// TODO c.logger.Debug("向服务器发送请求", fields...)
 
 	return
 }
@@ -110,11 +105,11 @@ func (c *Client) setProxy(client *resty.Client, req *resty.Request) (err error) 
 	} else if hp, hostOk := c.proxies[host]; hostOk {
 		addr := hp.Addr()
 		client.SetProxy(addr)
-		c.logger.Debug("设置代理服务器", field.New("url", req.URL), field.New("Proxy", addr))
+		// TODO c.logger.Debug("设置代理服务器", field.New("url", req.URL), field.New("Proxy", addr))
 	} else if dp, defaultOk := c.proxies[constant.TargetDefault]; defaultOk {
 		addr := dp.Addr()
 		client.SetProxy(addr)
-		c.logger.Debug("设置代理服务器", field.New("url", req.URL), field.New("Proxy", addr))
+		// TODO c.logger.Debug("设置代理服务器", field.New("url", req.URL), field.New("Proxy", addr))
 	}
 
 	return
