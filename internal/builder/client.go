@@ -32,6 +32,13 @@ func (c *Client) Payload(payload bool) (builder *Client) {
 	return
 }
 
+func (c *Client) Queries(queries map[string]string) (builder *Client) {
+	c.params.Queries = queries
+	builder = c
+
+	return
+}
+
 func (c *Client) Query(key string, value string) (builder *Client) {
 	c.params.Queries[key] = value
 	builder = c
@@ -39,8 +46,22 @@ func (c *Client) Query(key string, value string) (builder *Client) {
 	return
 }
 
+func (c *Client) Forms(forms map[string]string) (builder *Client) {
+	c.params.Forms = forms
+	builder = c
+
+	return
+}
+
 func (c *Client) Form(key string, value string) (builder *Client) {
 	c.params.Forms[key] = value
+	builder = c
+
+	return
+}
+
+func (c *Client) Headers(headers map[string]string) (builder *Client) {
+	c.params.Headers = headers
 	builder = c
 
 	return
