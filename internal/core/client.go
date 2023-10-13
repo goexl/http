@@ -10,18 +10,18 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/goexl/gox"
 	"github.com/goexl/gox/field"
 	"github.com/goexl/http/internal/interanl"
 	"github.com/goexl/http/internal/interanl/constant"
 	"github.com/goexl/http/internal/param"
-	"github.com/goexl/simaqian"
 )
 
 type Client struct {
 	*resty.Client
 
-	logger  simaqian.Logger
+	logger  interanl.Logger
 	proxies map[string]*param.Proxy
 	_       gox.CannotCopy
 }
