@@ -69,7 +69,7 @@ func (a *Cookie) Secure(secure bool) (cookie *Cookie) {
 }
 
 func (a *Cookie) Build() (core *Client) {
-	core.params.Cookies = append(core.params.Cookies, &http.Cookie{
+	a.core.params.Cookies = append(a.core.params.Cookies, &http.Cookie{
 		Name:     a.params.Name,
 		Value:    a.params.Value,
 		Path:     a.params.Path,

@@ -39,7 +39,7 @@ func (a *Auth) Token(token string) (auth *Auth) {
 }
 
 func (a *Auth) Build() (core *Client) {
-	core.params.Auth = a.params
+	a.core.params.Auth = a.params
 	core = a.core
 
 	return
