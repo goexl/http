@@ -46,7 +46,7 @@ func (p *Proxy) Host(host string) (auth *Proxy) {
 }
 
 func (p *Proxy) Build() (core *Client) {
-	core.params.Proxies = append(core.params.Proxies, &param.Proxy{
+	p.core.params.Proxies = append(p.core.params.Proxies, &param.Proxy{
 		Host:     p.params.Host,
 		Scheme:   p.params.Scheme,
 		Target:   p.params.Target,

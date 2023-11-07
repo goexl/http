@@ -41,7 +41,7 @@ func (c *Certificate) Client(public string, private string) (auth *Certificate) 
 }
 
 func (c *Certificate) Build() (core *Client) {
-	core.params.Certificate = c.params
+	c.core.params.Certificate = c.params
 	core = c.core
 
 	return
