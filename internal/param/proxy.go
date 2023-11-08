@@ -3,12 +3,15 @@ package param
 import (
 	"fmt"
 	"net/url"
+	"path"
+	"regexp"
 )
 
 type Proxy struct {
 	Host     string `json:"host,omitempty"`
 	Scheme   string `json:"scheme,omitempty"`
 	Target   string `json:"target,omitempty"`
+	Exclude  string `json:"exclude,omitempty"`
 	Username string `json:"username,omitempty"`
 	Password string `json:"password,omitempty"`
 }
@@ -27,6 +30,28 @@ func (p *Proxy) Addr() (addr string) {
 		)
 	} else {
 		addr = fmt.Sprintf("%s://%s", p.Scheme, p.Host)
+	}
+
+	return
+}
+
+func (p *Proxy) Targeted(host string) bool {
+	return p.match(p.Target, host)
+}
+
+func (p *Proxy) Excluded(host string) bool {
+	return p.match(p.Exclude, host)
+}
+
+func (p *Proxy) match(target string, host string) (matched bool) {
+	if "" == target {
+		matched = true
+	} else if host == target {
+		matched = true
+	} else if mm, me := path.Match(target, host); nil == me && mm {
+		matched = true
+	} else if rm, re := regexp.MatchString(target, host); nil == re && rm {
+		matched = true
 	}
 
 	return

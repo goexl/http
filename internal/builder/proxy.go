@@ -38,6 +38,13 @@ func (p *Proxy) Target(target string) (auth *Proxy) {
 	return
 }
 
+func (p *Proxy) Exclude(exclude string) (auth *Proxy) {
+	p.params.Exclude = exclude
+	auth = p
+
+	return
+}
+
 func (p *Proxy) Host(host string) (auth *Proxy) {
 	p.params.Host = host
 	auth = p

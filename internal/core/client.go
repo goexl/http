@@ -14,35 +14,23 @@ import (
 	"github.com/goexl/gox"
 	"github.com/goexl/gox/field"
 	"github.com/goexl/http/internal/interanl"
-	"github.com/goexl/http/internal/interanl/constant"
 	"github.com/goexl/http/internal/param"
 )
 
 type Client struct {
 	*resty.Client
 
-	proxies map[string]*param.Proxy
+	proxies []*param.Proxy
 	_       gox.CannotCopy
 }
 
 func NewClient(params *param.Client) (client *Client) {
 	client = new(Client)
 	client.Client = resty.New()
-	client.proxies = make(map[string]*param.Proxy)
+	client.proxies = params.Proxies
 
 	params.Init(client.Client)
 	// 设置动态代理
-	if 1 == len(params.Proxies) {
-		addr := params.Proxies[0].Addr()
-		client.SetProxy(addr)
-		// TODO params.Logger.Debug("设置通用代理服务器", field.New("proxy", addr))
-	} else if 1 < len(params.Proxies) {
-		for _, proxy := range params.Proxies {
-			target := gox.Ift("" == proxy.Target, constant.TargetDefault, proxy.Target)
-			client.proxies[target] = proxy
-		}
-	}
-	// 动态代理
 	if 0 != len(client.proxies) {
 		client.OnBeforeRequest(client.setProxy)
 		client.OnAfterResponse(client.unsetProxy)
@@ -102,14 +90,8 @@ func (c *Client) log(_ *resty.Client, req *http.Request) (err error) {
 func (c *Client) setProxy(client *resty.Client, req *resty.Request) (err error) {
 	if host, he := c.host(req.URL); nil != he {
 		err = he
-	} else if hp, hostOk := c.proxies[host]; hostOk {
-		addr := hp.Addr()
+	} else if addr, settable := c.canSetProxy(host); settable {
 		client.SetProxy(addr)
-		// TODO c.logger.Debug("设置代理服务器", field.New("url", req.URL), field.New("Proxy", addr))
-	} else if dp, defaultOk := c.proxies[constant.TargetDefault]; defaultOk {
-		addr := dp.Addr()
-		client.SetProxy(addr)
-		// TODO c.logger.Debug("设置代理服务器", field.New("url", req.URL), field.New("Proxy", addr))
 	}
 
 	return
@@ -122,10 +104,10 @@ func (c *Client) unsetProxy(client *resty.Client, _ *resty.Response) (err error)
 }
 
 func (c *Client) host(raw string) (host string, err error) {
-	if _url, ue := url.Parse(raw); nil != ue {
+	if link, ue := url.Parse(raw); nil != ue {
 		err = ue
 	} else {
-		host = _url.Host
+		host = link.Host
 	}
 
 	return
@@ -167,4 +149,18 @@ func (c *Client) curl(req *resty.Request) (curl string, err error) {
 
 func (c *Client) bashEscape(from string) string {
 	return `'` + strings.Replace(from, `'`, `'\''`, -1) + `'`
+}
+
+func (c *Client) canSetProxy(host string) (addr string, settable bool) {
+	for _, proxy := range c.proxies {
+		if proxy.Targeted(host) && !proxy.Excluded(host) {
+			addr = proxy.Addr()
+			settable = true
+		}
+		if settable {
+			break
+		}
+	}
+
+	return
 }
