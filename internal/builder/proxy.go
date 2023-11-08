@@ -16,38 +16,38 @@ func NewProxy(core *Client) *Proxy {
 	}
 }
 
-func (p *Proxy) Basic(username string, password string) (auth *Proxy) {
+func (p *Proxy) Basic(username string, password string) (proxy *Proxy) {
 	p.params.Username = username
 	p.params.Password = password
-	auth = p
+	proxy = p
 
 	return
 }
 
-func (p *Proxy) Scheme(scheme string) (auth *Proxy) {
+func (p *Proxy) Scheme(scheme string) (proxy *Proxy) {
 	p.params.Scheme = scheme
-	auth = p
+	proxy = p
 
 	return
 }
 
-func (p *Proxy) Target(target string) (auth *Proxy) {
+func (p *Proxy) Target(target string) (proxy *Proxy) {
 	p.params.Target = target
-	auth = p
+	proxy = p
 
 	return
 }
 
-func (p *Proxy) Exclude(exclude string) (auth *Proxy) {
+func (p *Proxy) Exclude(exclude string) (proxy *Proxy) {
 	p.params.Exclude = exclude
-	auth = p
+	proxy = p
 
 	return
 }
 
-func (p *Proxy) Host(host string) (auth *Proxy) {
+func (p *Proxy) Host(host string) (proxy *Proxy) {
 	p.params.Host = host
-	auth = p
+	proxy = p
 
 	return
 }
@@ -57,6 +57,7 @@ func (p *Proxy) Build() (core *Client) {
 		Host:     p.params.Host,
 		Scheme:   p.params.Scheme,
 		Target:   p.params.Target,
+		Exclude:  p.params.Exclude,
 		Username: p.params.Username,
 		Password: p.params.Password,
 	})

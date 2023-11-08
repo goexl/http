@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"path"
 	"regexp"
+	"strings"
 )
 
 type Proxy struct {
@@ -36,17 +37,17 @@ func (p *Proxy) Addr() (addr string) {
 }
 
 func (p *Proxy) Targeted(host string) bool {
-	return p.match(p.Target, host)
+	return "" == p.Target || p.match(p.Target, host)
 }
 
 func (p *Proxy) Excluded(host string) bool {
-	return p.match(p.Exclude, host)
+	return "" != p.Exclude && p.match(p.Exclude, host)
 }
 
 func (p *Proxy) match(target string, host string) (matched bool) {
-	if "" == target {
+	if host == target {
 		matched = true
-	} else if host == target {
+	} else if strings.Contains(target, host) {
 		matched = true
 	} else if mm, me := path.Match(target, host); nil == me && mm {
 		matched = true
