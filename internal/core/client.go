@@ -92,6 +92,8 @@ func (c *Client) setProxy(client *resty.Client, req *resty.Request) (err error) 
 		err = he
 	} else if addr, settable := c.canSetProxy(host); settable {
 		client.SetProxy(addr)
+	} else if !settable && client.IsProxySet() { // ! 如果不需要设置代理而客户端又被设置了代理，需要去除代理
+		client.RemoveProxy()
 	}
 
 	return
