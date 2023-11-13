@@ -100,7 +100,9 @@ func (c *Client) setProxy(client *resty.Client, req *resty.Request) (err error) 
 }
 
 func (c *Client) unsetProxy(client *resty.Client, _ *resty.Response) (err error) {
-	client.RemoveProxy()
+	if client.IsProxySet() {
+		client.RemoveProxy()
+	}
 
 	return
 }
