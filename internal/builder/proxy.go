@@ -62,6 +62,7 @@ func (p *Proxy) Port(port int) (proxy *Proxy) {
 func (p *Proxy) Build() (core *Client) {
 	p.core.params.Proxies = append(p.core.params.Proxies, &param.Proxy{
 		Host:     p.params.Host,
+		Port:     p.params.Port,
 		Scheme:   p.params.Scheme,
 		Target:   p.params.Target,
 		Exclude:  p.params.Exclude,
