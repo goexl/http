@@ -14,6 +14,7 @@ import (
 	"github.com/goexl/gox"
 	"github.com/goexl/gox/field"
 	"github.com/goexl/http/internal/interanl"
+	"github.com/goexl/http/internal/interanl/constant"
 	"github.com/goexl/http/internal/param"
 )
 
@@ -79,6 +80,13 @@ func (c *Client) parseRequest(req *http.Request) (request *resty.Request, err er
 		err = re
 	} else {
 		request.SetBody(body)
+	}
+	if nil != err && 0 != len(req.Header[constant.HeaderAuthorization]) {
+		// ! Resty会自动增加一个`addCredentials`的钩子修改`Authorization`标题头信息导致原来设置的信息无效
+		authorization := req.Header[constant.HeaderAuthorization][0]
+		index := strings.Index(authorization, constant.Space)
+		request.SetAuthScheme(authorization[:index])
+		request.SetAuthToken(authorization[index+1:])
 	}
 
 	return
@@ -180,10 +188,10 @@ func (c *Client) bashEscape(from string) string {
 	return `'` + strings.Replace(from, `'`, `'\''`, -1) + `'`
 }
 
-func (c *Client) canSetProxy(host string) (addr string, settable bool) {
+func (c *Client) canSetProxy(host string) (uri string, settable bool) {
 	for _, proxy := range c.proxies {
 		if proxy.Targeted(host) && !proxy.Excluded(host) {
-			addr = proxy.Uri()
+			uri = proxy.Uri()
 			settable = true
 		}
 		if settable {

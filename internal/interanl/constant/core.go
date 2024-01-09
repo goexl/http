@@ -1,3 +1,6 @@
 package constant
 
-const Colon = ":"
+const (
+	Colon = ":"
+	Space = " "
+)
