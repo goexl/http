@@ -49,7 +49,6 @@ func (c *Client) Do(req *http.Request) (rsp *http.Response, err error) {
 		err = ee
 	} else {
 		rsp = response.RawResponse
-		rsp.Body = io.NopCloser(bytes.NewReader(response.Body()))
 	}
 
 	return
@@ -76,12 +75,13 @@ func (c *Client) Fields(rsp *resty.Response) (fields gox.Fields[any]) {
 func (c *Client) parseRequest(req *http.Request) (request *resty.Request, err error) {
 	request = c.R()
 	request.Header = req.Header
+	request.SetDoNotParseResponse(true)
 	if body, re := io.ReadAll(req.Body); nil != re {
 		err = re
 	} else {
 		request.SetBody(body)
 	}
-	if nil != err && 0 != len(req.Header[constant.HeaderAuthorization]) {
+	if nil == err && 0 != len(req.Header[constant.HeaderAuthorization]) {
 		// ! Resty会自动增加一个`addCredentials`的钩子修改`Authorization`标题头信息导致原来设置的信息无效
 		authorization := req.Header[constant.HeaderAuthorization][0]
 		index := strings.Index(authorization, constant.Space)
