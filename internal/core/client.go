@@ -183,7 +183,7 @@ func (c *Client) bashEscape(from string) string {
 func (c *Client) canSetProxy(host string) (addr string, settable bool) {
 	for _, proxy := range c.proxies {
 		if proxy.Targeted(host) && !proxy.Excluded(host) {
-			addr = proxy.Addr()
+			addr = proxy.Uri()
 			settable = true
 		}
 		if settable {

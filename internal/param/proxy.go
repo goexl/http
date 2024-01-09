@@ -6,10 +6,13 @@ import (
 	"path"
 	"regexp"
 	"strings"
+
+	"github.com/goexl/gox"
 )
 
 type Proxy struct {
 	Host     string `json:"host,omitempty"`
+	Port     int    `json:"port,omitempty"`
 	Scheme   string `json:"scheme,omitempty"`
 	Target   string `json:"target,omitempty"`
 	Exclude  string `json:"exclude,omitempty"`
@@ -21,16 +24,21 @@ func NewProxy() *Proxy {
 	return new(Proxy)
 }
 
-func (p *Proxy) Addr() (addr string) {
+func (p *Proxy) Uri() (uri string) {
+	addr := gox.StringBuilder(p.Host)
+	if 0 != p.Port {
+		addr.Append(p.Port)
+	}
+
 	if "" != p.Username && "" != p.Password {
-		addr = fmt.Sprintf(
+		uri = fmt.Sprintf(
 			"%s://%s:%s@%s",
 			p.Scheme,
 			url.QueryEscape(p.Username), url.QueryEscape(p.Password),
-			p.Host,
+			addr.String(),
 		)
 	} else {
-		addr = fmt.Sprintf("%s://%s", p.Scheme, p.Host)
+		uri = fmt.Sprintf("%s://%s", p.Scheme, addr.String())
 	}
 
 	return

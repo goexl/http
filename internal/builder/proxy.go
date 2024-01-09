@@ -52,6 +52,13 @@ func (p *Proxy) Host(host string) (proxy *Proxy) {
 	return
 }
 
+func (p *Proxy) Port(port int) (proxy *Proxy) {
+	p.params.Port = port
+	proxy = p
+
+	return
+}
+
 func (p *Proxy) Build() (core *Client) {
 	p.core.params.Proxies = append(p.core.params.Proxies, &param.Proxy{
 		Host:     p.params.Host,
