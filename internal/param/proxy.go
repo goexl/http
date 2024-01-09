@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/goexl/gox"
+	"github.com/goexl/http/internal/interanl/constant"
 )
 
 type Proxy struct {
@@ -27,7 +28,7 @@ func NewProxy() *Proxy {
 func (p *Proxy) Uri() (uri string) {
 	addr := gox.StringBuilder(p.Host)
 	if 0 != p.Port {
-		addr.Append(p.Port)
+		addr.Append(constant.Colon).Append(p.Port)
 	}
 
 	if "" != p.Username && "" != p.Password {
