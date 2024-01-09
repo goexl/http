@@ -41,6 +41,19 @@ func NewClient(params *param.Client) (client *Client) {
 	return
 }
 
+func (c *Client) Do(req *http.Request) (rsp *http.Response, err error) {
+	if request, pre := c.parseRequest(req); nil != pre {
+		err = pre
+	} else if response, ee := request.Execute(req.Method, req.URL.String()); nil != ee {
+		err = ee
+	} else {
+		rsp = response.RawResponse
+		rsp.Body = io.NopCloser(bytes.NewReader(response.Body()))
+	}
+
+	return
+}
+
 func (c *Client) Curl(rsp *resty.Response) (string, error) {
 	return c.curl(rsp.Request)
 }
@@ -54,6 +67,18 @@ func (c *Client) Fields(rsp *resty.Response) (fields gox.Fields[any]) {
 		field.New("url", rsp.Request.URL),
 		field.New("status", rsp.StatusCode()),
 		field.New("body", string(rsp.Body())),
+	}
+
+	return
+}
+
+func (c *Client) parseRequest(req *http.Request) (request *resty.Request, err error) {
+	request = c.R()
+	request.Header = req.Header
+	if body, re := io.ReadAll(req.Body); nil != re {
+		err = re
+	} else {
+		request.SetBody(body)
 	}
 
 	return
