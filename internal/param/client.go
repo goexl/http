@@ -17,6 +17,8 @@ type Client struct {
 	Auth *Auth `json:"auth,omitempty"`
 	// Body数据传输控制
 	Payload bool `json:"payload,omitempty"`
+	// 警告消息开关
+	Warning bool `json:"warning,omitempty"`
 	// 秘钥配置
 	Certificate *Certificate `json:"certificate,omitempty"`
 	// 通用的查询参数
@@ -47,6 +49,7 @@ func (c *Client) Init(client *resty.Client) {
 	client.SetQueryParams(c.Queries)
 	client.SetFormData(c.Forms)
 	client.SetCookies(c.Cookies)
+	client.SetDisableWarn(!c.Warning)
 	c.auth(client)
 	c.certificate(client)
 }
