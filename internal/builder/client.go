@@ -31,6 +31,13 @@ func (c *Client) Payload(payload bool) (builder *Client) {
 	return
 }
 
+func (c *Client) Warning(warning bool) (builder *Client) {
+	c.params.Warning = warning
+	builder = c
+
+	return
+}
+
 func (c *Client) Queries(queries map[string]string) (builder *Client) {
 	c.params.Queries = queries
 	builder = c
