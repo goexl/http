@@ -76,7 +76,9 @@ func (c *Client) parseRequest(req *http.Request) (request *resty.Request, err er
 	request = c.R()
 	request.Header = req.Header
 	request.SetDoNotParseResponse(true)
-	if body, re := io.ReadAll(req.Body); nil != re {
+	if nil == req.Body {
+		// 空实现，纯粹是为了代码好看
+	} else if body, re := io.ReadAll(req.Body); nil != re {
 		err = re
 	} else {
 		request.SetBody(body)
