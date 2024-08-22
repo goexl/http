@@ -22,7 +22,7 @@ type Client struct {
 	*resty.Client
 
 	proxies []*param.Proxy
-	_       gox.CannotCopy
+	_       gox.Pointerized
 }
 
 func NewClient(params *param.Client) (client *Client) {
