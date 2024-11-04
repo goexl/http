@@ -1,10 +1,10 @@
 module github.com/goexl/http
 
-go 1.21
+go 1.23
 
 require (
-	github.com/go-resty/resty/v2 v2.14.0
-	github.com/goexl/gox v0.6.3
+	github.com/go-resty/resty/v2 v2.15.3
+	github.com/goexl/gox v1.8.9
 )
 
-require golang.org/x/net v0.28.0 // indirect
+require golang.org/x/net v0.30.0 // indirect
