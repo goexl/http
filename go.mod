@@ -9,4 +9,4 @@ require (
 	github.com/goexl/gox v1.9.2
 )
 
-require golang.org/x/net v0.39.0 // indirect
+require golang.org/x/net v0.40.0 // indirect
