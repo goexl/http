@@ -153,18 +153,19 @@ func (c *Client) host(raw string) (host string, err error) {
 }
 
 func (c *Client) curl(req *resty.Request) (curl string, err error) {
-	command := new(strings.Builder)
-	command.WriteString("curl")
-	command.WriteString("-X")
-	command.WriteString(c.bashEscape(req.Method))
+	builder := new(strings.Builder)
+	builder.WriteString("curl")
+	builder.WriteString(" --request")
+	builder.WriteString(c.bashEscape(req.Method))
 
 	if nil != req.Body {
 		if body, re := io.ReadAll(req.RawRequest.Body); nil != re {
 			err = re
 		} else {
 			req.Body = interanl.NopCloser{Reader: bytes.NewBuffer(body)}
-			command.WriteString("-d")
-			command.WriteString(c.bashEscape(string(body)))
+			builder.WriteString(" --raw-data")
+			builder.WriteString(c.bashEscape(string(body)))
+			builder.WriteString("\n")
 		}
 	}
 	if nil != err {
@@ -178,10 +179,16 @@ func (c *Client) curl(req *resty.Request) (curl string, err error) {
 	sort.Strings(keys)
 
 	for _, key := range keys {
-		command.WriteString("-H")
-		command.WriteString(c.bashEscape(fmt.Sprintf("%s: %s", key, strings.Join(req.Header[key], " "))))
+		builder.WriteString(" --header")
+		builder.WriteString(c.bashEscape(fmt.Sprintf("%s: %s", key, strings.Join(req.Header[key], " "))))
+		builder.WriteString("\n")
 	}
-	command.WriteString(c.bashEscape(req.URL))
+
+	builder.WriteString(" --location")
+	builder.WriteString(c.bashEscape(req.URL))
+	builder.WriteString("\n")
+
+	curl = builder.String()
 
 	return
 }
