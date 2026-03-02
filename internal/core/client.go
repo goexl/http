@@ -155,9 +155,14 @@ func (c *Client) host(raw string) (host string, err error) {
 func (c *Client) curl(req *resty.Request) (curl string, err error) {
 	builder := new(strings.Builder)
 	builder.WriteString("curl")
+	builder.WriteString("\n")
+
+	// 调用方法
 	builder.WriteString(" --request ")
 	builder.WriteString(c.bashEscape(req.Method))
+	builder.WriteString("\n")
 
+	// 请求体
 	if nil != req.Body {
 		if body, re := io.ReadAll(req.RawRequest.Body); nil != re {
 			err = re
@@ -178,12 +183,14 @@ func (c *Client) curl(req *resty.Request) (curl string, err error) {
 	}
 	sort.Strings(keys)
 
+	// 标头
 	for _, key := range keys {
 		builder.WriteString(" --header ")
 		builder.WriteString(c.bashEscape(fmt.Sprintf("%s: %s", key, strings.Join(req.Header[key], " "))))
 		builder.WriteString("\n")
 	}
 
+	// 地址
 	builder.WriteString(" --location ")
 	builder.WriteString(c.bashEscape(req.URL))
 	builder.WriteString("\n")
