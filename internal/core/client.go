@@ -155,7 +155,7 @@ func (c *Client) host(raw string) (host string, err error) {
 func (c *Client) curl(req *resty.Request) (curl string, err error) {
 	builder := new(strings.Builder)
 	builder.WriteString("curl")
-	builder.WriteString(" --request")
+	builder.WriteString(" --request ")
 	builder.WriteString(c.bashEscape(req.Method))
 
 	if nil != req.Body {
@@ -163,7 +163,7 @@ func (c *Client) curl(req *resty.Request) (curl string, err error) {
 			err = re
 		} else {
 			req.Body = interanl.NopCloser{Reader: bytes.NewBuffer(body)}
-			builder.WriteString(" --raw-data")
+			builder.WriteString(" --raw-data ")
 			builder.WriteString(c.bashEscape(string(body)))
 			builder.WriteString("\n")
 		}
@@ -179,12 +179,12 @@ func (c *Client) curl(req *resty.Request) (curl string, err error) {
 	sort.Strings(keys)
 
 	for _, key := range keys {
-		builder.WriteString(" --header")
+		builder.WriteString(" --header ")
 		builder.WriteString(c.bashEscape(fmt.Sprintf("%s: %s", key, strings.Join(req.Header[key], " "))))
 		builder.WriteString("\n")
 	}
 
-	builder.WriteString(" --location")
+	builder.WriteString(" --location ")
 	builder.WriteString(c.bashEscape(req.URL))
 	builder.WriteString("\n")
 
