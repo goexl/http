@@ -1,8 +1,6 @@
 package builder
 
 import (
-	"time"
-
 	"github.com/goexl/http/internal/core"
 	"github.com/goexl/http/internal/param"
 )
@@ -15,13 +13,6 @@ func NewClient() *Client {
 	return &Client{
 		params: param.NewClient(),
 	}
-}
-
-func (c *Client) Timeout(timeout time.Duration) (builder *Client) {
-	c.params.Timeout = timeout
-	builder = c
-
-	return
 }
 
 func (c *Client) Payload(payload bool) (builder *Client) {
@@ -82,6 +73,14 @@ func (c *Client) Header(key string, value string) (builder *Client) {
 
 func (c *Client) Auth() *Auth {
 	return NewAuth(c)
+}
+
+func (c *Client) Timeout() *Timeout {
+	return NewTimeout(c)
+}
+
+func (c *Client) Pool() *Pool {
+	return NewPool(c)
 }
 
 func (c *Client) Proxy() *Proxy {

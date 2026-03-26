@@ -3,14 +3,15 @@ package param
 import (
 	"crypto/tls"
 	"net/http"
-	"time"
 
 	"github.com/go-resty/resty/v2"
 )
 
 type Client struct {
 	// 超时
-	Timeout time.Duration `json:"timeout,omitempty"`
+	Timeout *Timeout `json:"timeout,omitempty"`
+	// 连接池
+	Pool *Pool `json:"pool,omitempty"`
 	// 代理列表
 	Proxies []*Proxy `json:"proxies,omitempty"`
 	// 授权配置
@@ -33,6 +34,8 @@ type Client struct {
 
 func NewClient() *Client {
 	return &Client{
+		Timeout: NewTimeout(),
+		Pool:    NewPool(),
 		Payload: true,
 		Proxies: make([]*Proxy, 0),
 		Queries: make(map[string]string),
@@ -43,7 +46,15 @@ func NewClient() *Client {
 }
 
 func (c *Client) Init(client *resty.Client) {
-	client.SetTimeout(c.Timeout)
+	client.SetTimeout(c.Timeout.Connection)         // 启用连接池和长连接
+	client.SetCloseConnection(false)                // 不关闭连接
+	client.GetClient().Transport = &http.Transport{ // 设置连接池配置
+		MaxIdleConns:        c.Pool.All,          // 最大空闲连接数
+		MaxIdleConnsPerHost: c.Pool.Host,         // 每个机器最大空闲连接数
+		IdleConnTimeout:     c.Timeout.Idle,      // 空闲连接超时时间
+		TLSHandshakeTimeout: c.Timeout.Handshake, // 握手超时
+	}
+
 	client.SetAllowGetMethodPayload(c.Payload)
 	client.SetHeaders(c.Headers)
 	client.SetQueryParams(c.Queries)
