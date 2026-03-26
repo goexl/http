@@ -1,8 +1,6 @@
 package builder
 
 import (
-	"time"
-
 	"github.com/goexl/http/internal/param"
 )
 
