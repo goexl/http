@@ -46,14 +46,21 @@ func NewClient() *Client {
 }
 
 func (c *Client) Init(client *resty.Client) {
-	client.SetTimeout(c.Timeout.Connection)         // 启用连接池和长连接
-	client.SetCloseConnection(false)                // 不关闭连接
-	client.GetClient().Transport = &http.Transport{ // 设置连接池配置
-		MaxIdleConns:        c.Pool.All,          // 最大空闲连接数
-		MaxIdleConnsPerHost: c.Pool.Host,         // 每个机器最大空闲连接数
-		IdleConnTimeout:     c.Timeout.Idle,      // 空闲连接超时时间
+	client.SetTimeout(c.Timeout.Connection) // 启用连接池和长连接
+	client.SetCloseConnection(false)        // 不关闭连接
+	client.SetTransport(&http.Transport{    // 设置连接池配置
+		MaxIdleConns:        c.Pool.All,     // 最大空闲连接数
+		MaxIdleConnsPerHost: c.Pool.Host,    // 每个机器最大空闲连接数
+		IdleConnTimeout:     c.Timeout.Idle, // 空闲连接超时时间
+
 		TLSHandshakeTimeout: c.Timeout.Handshake, // 握手超时
-	}
+		TLSClientConfig: &tls.Config{
+			SessionTicketsDisabled: false, // 启用复用功能
+		},
+
+		ForceAttemptHTTP2: true,  // 启用
+		DisableKeepAlives: false, // 保持长链接
+	})
 
 	client.SetAllowGetMethodPayload(c.Payload)
 	client.SetHeaders(c.Headers)
