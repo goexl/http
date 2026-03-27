@@ -55,6 +55,7 @@ func (c *Client) Init(client *resty.Client) {
 
 		TLSHandshakeTimeout: c.Timeout.Handshake, // 握手超时
 		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify:     true,  // 不验证证书
 			SessionTicketsDisabled: false, // 启用复用功能
 		},
 
