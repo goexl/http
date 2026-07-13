@@ -24,6 +24,12 @@ func (t *Timeout) Connection(timeout time.Duration) *Timeout {
 	})
 }
 
+func (t *Timeout) Response(timeout time.Duration) *Timeout {
+	return t.set(func() {
+		t.params.Response = timeout
+	})
+}
+
 func (t *Timeout) Idle(timeout time.Duration) *Timeout {
 	return t.set(func() {
 		t.params.Idle = timeout
