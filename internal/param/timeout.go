@@ -14,9 +14,9 @@ type Timeout struct {
 
 func NewTimeout() *Timeout {
 	return &Timeout{
-		Total:     120 * time.Second,
+		Total:     0,
 		Connect:   10 * time.Second,
-		Header:    600 * time.Second,
+		Header:    60 * time.Second,
 		Idle:      90 * time.Second,
 		Handshake: 10 * time.Second,
 	}
