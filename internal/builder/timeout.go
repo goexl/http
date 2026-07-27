@@ -18,15 +18,21 @@ func NewTimeout(core *Client) *Timeout {
 	}
 }
 
-func (t *Timeout) Connection(timeout time.Duration) *Timeout {
+func (t *Timeout) Total(timeout time.Duration) *Timeout {
 	return t.set(func() {
-		t.params.Connection = timeout
+		t.params.Total = timeout
 	})
 }
 
-func (t *Timeout) Response(timeout time.Duration) *Timeout {
+func (t *Timeout) Connect(timeout time.Duration) *Timeout {
 	return t.set(func() {
-		t.params.Response = timeout
+		t.params.Connect = timeout
+	})
+}
+
+func (t *Timeout) Header(timeout time.Duration) *Timeout {
+	return t.set(func() {
+		t.params.Header = timeout
 	})
 }
 

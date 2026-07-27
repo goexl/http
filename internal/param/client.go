@@ -2,7 +2,9 @@ package param
 
 import (
 	"crypto/tls"
+	"net"
 	"net/http"
+	"time"
 
 	"github.com/go-resty/resty/v2"
 )
@@ -46,13 +48,18 @@ func NewClient() *Client {
 }
 
 func (c *Client) Init(client *resty.Client) {
-	client.SetTimeout(c.Timeout.Connection) // 启用连接池和长连接
-	client.SetCloseConnection(false)        // 不关闭连接
-	client.SetTransport(&http.Transport{    // 设置连接池配置
-		MaxIdleConns:          c.Pool.All,         // 最大空闲连接数
-		MaxIdleConnsPerHost:   c.Pool.Host,        // 每个机器最大空闲连接数
-		IdleConnTimeout:       c.Timeout.Idle,     // 空闲连接超时时间
-		ResponseHeaderTimeout: c.Timeout.Response, // 响应超时时间
+	client.SetTimeout(c.Timeout.Total)   // 启用连接池和长连接
+	client.SetCloseConnection(false)     // 不关闭连接
+	client.SetTransport(&http.Transport{ // 设置连接池配置
+		DialContext: (&net.Dialer{
+			Timeout:   10 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}).DialContext,
+
+		MaxIdleConns:          c.Pool.All,       // 最大空闲连接数
+		MaxIdleConnsPerHost:   c.Pool.Host,      // 每个机器最大空闲连接数
+		IdleConnTimeout:       c.Timeout.Idle,   // 空闲连接超时时间
+		ResponseHeaderTimeout: c.Timeout.Header, // 响应超时时间
 
 		TLSHandshakeTimeout: c.Timeout.Handshake, // 握手超时
 		TLSClientConfig: &tls.Config{
